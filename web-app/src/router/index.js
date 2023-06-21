@@ -6,7 +6,12 @@ const routes = [
     path: '/',
     name: 'home',
     component: () => import(/* webpackChunkName: "home" */ '@/views/Home.vue'),
-  }
+  },
+  {
+    path: '/router-discover',
+    name: 'router-discover',
+    component: () => import(/* webpackChunkName: "routerDiscover" */ '@/views/RouterDiscover.vue'),
+  },
 ]
 
 const router = createRouter({
