@@ -14,53 +14,59 @@
           </v-tabs>
         </div>
 
-        {{ currentSearch }}
 
         <v-window v-model="tab">
 
           <v-window-item value="searcher">
-            <v-alert closable icon="mdi-head-lightbulb-outline" title="What about a tip?" text="Drag and drop objects into the map."></v-alert>
+            <v-alert closable icon="mdi-head-lightbulb-outline" title="What about a tip?"
+              text="Drag and drop objects into the map."></v-alert>
             <v-container class="pa-8">
-            
+
               <h6 class="text-right">Or complete the form manually. </h6>
               <v-row class="mt-4">
-                <v-autocomplete v-model="objects.drone.position" :items="tableMapPositions" label="Where is the drone?" v-intersect>
+                <v-autocomplete v-model="objects.drone.position" :items="tableMapPositions" label="Where is the drone?"
+                  v-intersect>
                   <template v-slot:prepend>
-                    <v-icon class="draggable" id="drone" :draggable="true" @dragstart="e => dragStart(e, 'drone')" :color="objects.drone.icon.color" :size="32">
-                      {{objects.drone.icon.name}}
+                    <v-icon class="draggable elevation-2 rounded-xl bg-white pa-4" id="drone" :draggable="true"
+                      @dragstart="e => dragStart(e, 'drone')" :color="objects.drone.icon.color" :size="25">
+                      {{ objects.drone.icon.name }}
                     </v-icon>
                   </template>
                 </v-autocomplete>
               </v-row>
               <v-row>
-                <v-autocomplete v-model="objects.start.position" :items="tableMapPositions" label="Where will be the starting point?" v-intersect>
+                <v-autocomplete v-model="objects.start.position" :items="tableMapPositions"
+                  label="Where will be the starting point?" v-intersect>
                   <template v-slot:prepend>
-                    <v-icon class="draggable" :color="objects.start.icon.color" :size="32" :draggable="true" @dragstart="e => dragStart(e, 'start')">
-                      {{objects.start.icon.name}}
+                    <v-icon class="draggable elevation-2 rounded-xl bg-white pa-4" :color="objects.start.icon.color"
+                      :size="25" :draggable="true" @dragstart="e => dragStart(e, 'start')">
+                      {{ objects.start.icon.name }}
                     </v-icon>
                   </template>
                 </v-autocomplete>
               </v-row>
               <v-row>
-                <v-autocomplete v-model="objects.end.position" :items="tableMapPositions" label="Where will be the ending point?" v-intersect>
+                <v-autocomplete v-model="objects.end.position" :items="tableMapPositions"
+                  label="Where will be the ending point?" v-intersect>
                   <template v-slot:prepend>
-                    <v-icon class="draggable" :color="objects.end.icon.color" :size="32" :draggable="true" @dragstart="e => dragStart(e, 'end')">
-                      {{objects.end.icon.name}}
+                    <v-icon class="draggable elevation-2 rounded-xl bg-white pa-4 border" :color="objects.end.icon.color"
+                      :size="25" :draggable="true" @dragstart="e => dragStart(e, 'end')">
+                      {{ objects.end.icon.name }}
                     </v-icon>
                   </template>
                 </v-autocomplete>
               </v-row>
 
               <v-row justify="center" class="mt-5">
-                <v-btn color="red-darken-4" @click="findFasterRoute()">
+                <v-btn color="red-darken-4" @click="findFasterRoute()" :disabled="!canSearch">
                   <v-icon icon="mdi-map-search-outline" class="mr-2"></v-icon> find fastest route
                 </v-btn>
               </v-row>
             </v-container>
           </v-window-item>
-          
+
           <v-window-item value="last">
-            <LastSearches :key="lastSearchesKeyComponent"  class="pa-3"/>
+            <LastSearches :key="lastSearchesKeyComponent" class="pa-3" />
           </v-window-item>
 
         </v-window>
@@ -68,9 +74,23 @@
       </v-navigation-drawer>
       <v-main>
         <v-container>
-          
-          <v-row justify="center" style="height: 100vh">
-            <Chessboard @onDropObject="updateDropedObject"  :objects="objects" :IDs="tableMapPositions" v-if="tableMapPositions.length > 0" class="align-self-center"/>
+          <v-row justify="center" class="mb-0 mt-1" v-if="search.result">
+            <v-col cols="5">
+              <v-alert elevation="5" class="bg-white" icon="mdi-timer-marker-outline" title="Done!">
+                The drone will take {{ search.result?.time }} seconds to do the delivery.
+                <div class="d-flex justify-end mt-3">
+                  <v-btn variant="text" color="red-darken-4">
+                    <v-icon icon="mdi-map-marker-path"></v-icon> Show on map
+                  </v-btn>
+                </div>
+              </v-alert>
+            </v-col>
+          </v-row>
+
+          <v-row justify="center" :style="{ height: search.result ? '70vh' : '100vh' }">
+            <Chessboard @onDropObject="updateDropedObject" :path="search.result?.path" :objects="objects"
+              :IDs="tableMapPositions" :isSearching="searchInProgress" v-if="tableMapPositions.length > 0"
+              class="align-self-center" />
           </v-row>
 
         </v-container>
@@ -94,7 +114,7 @@ export default {
     Vue3Lottie,
     Chessboard,
     LastSearches
-},
+  },
   data() {
     return {
       tab: 'searcher',
@@ -102,14 +122,15 @@ export default {
       objects: {
         drone: {
           position: undefined,
-          icon: { color: 'red-darken-4', name: "mdi-quadcopter"},
+          icon: { color: 'red-darken-4', name: "mdi-quadcopter" },
         },
-        start: {position: undefined, icon: {color: 'blue', name: "mdi-record-circle-outline"} },
-        end: {position: undefined, icon: {color: 'green', name: "mdi-send-circle-outline"}}
+        start: { position: undefined, icon: { color: 'blue', name: "mdi-record-circle-outline" } },
+        end: { position: undefined, icon: { color: 'green', name: "mdi-send-circle-outline" } }
       },
-      route: ["A1", "B1"],
       lastSearchesKeyComponent: "",
-      search: {}
+      search: {},
+      canSearch: false,
+      searchInProgress: false
     }
   },
   mounted() {
@@ -119,13 +140,14 @@ export default {
     dragStart(event, itemId) {
       event.dataTransfer.setData('text/plain', itemId);
     },
-    updateDropedObject({name, position}){
+    updateDropedObject({ name, position }) {
       this.objects[name].position = position
     },
-    renderLastSearchesComponent(){
+    renderLastSearchesComponent() {
       this.lastSearchesKeyComponent = `last-search-key-${Math.random().toString()}`
     },
-    async findFasterRoute(){
+    async findFasterRoute() {
+      this.searchInProgress = true
       this.search = {
         drone: this.objects.drone.position,
         start: this.objects.start.position,
@@ -133,16 +155,30 @@ export default {
       }
 
       //mocking result
-      this.search.result = {
-        path: ["A1", "A2", "A3"],
-        time: 3.5
-      }
+
+      setTimeout(() => {
+        this.search.result = {
+          path: [["A1", "A2", "A3", "A4", "A5"],["B6", "C7", "C6", "C5"]],
+          time: 3.5
+        }
+
+        this.searchInProgress = false
+
+        SearchService.save(this.search).then(() => this.renderLastSearchesComponent())
 
 
-      await SearchService.save(this.search)
-      this.renderLastSearchesComponent()
+      }, 5000)
     },
 
+
+  },
+  watch: {
+    objects: {
+      deep: true,
+      handler() {
+        this.canSearch = (this.objects.drone?.position && this.objects.start?.position && this.objects.end?.position)
+      }
+    }
   }
 }
 
