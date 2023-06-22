@@ -1,24 +1,25 @@
 <template>
     <div>
-        <div class="chessboard elevation-8">
+        <div class="chessboard">
             <div class="row" v-for="row, i in matrix" :key="`matrix-row-${i}`">
                 <div class="cell text-center justify-center" v-for="cell in row" :id="cell" @drop="e => drop(e, cell)"
                     @dragover="allowDrop">
                     <span v-if="objects.drone.position === cell">
-                        <v-icon :icon="objects.drone.icon.name" :color="objects.drone.icon.color" :draggable="true"
+                        <v-icon class="draggable" :icon="objects.drone.icon.name" :color="objects.drone.icon.color" :draggable="true"
                             @dragstart="e => dragStart(e, 'drone')" :size="droneIconSize"></v-icon>
                     </span>
                     <span v-if="objects.start.position === cell">
-                        <v-icon :icon="objects.start.icon.name" :color="objects.start.icon.color" :draggable="true"
+                        <v-icon class="draggable" :icon="objects.start.icon.name" :color="objects.start.icon.color" :draggable="true"
                             @dragstart="e => dragStart(e, 'start')" :size="startIconSize"></v-icon>
                     </span>
                     <span v-if="objects.end.position === cell">
-                        <v-icon :icon="objects.end.icon.name" :color="objects.end.icon.color" :draggable="true"
+                        <v-icon class="draggable" :icon="objects.end.icon.name" :color="objects.end.icon.color" :draggable="true"
                             @dragstart="e => dragStart(e, 'end')" :size="endIconSize"></v-icon>
                     </span>
                 </div>
             </div>
         </div>
+        <div class="shadow"></div>
     </div>
 </template>
 <script>
@@ -64,9 +65,10 @@ export default {
         dragStart(event, itemId) {
             event.dataTransfer.setData('text/plain', itemId);
         },
+        
+        // TO DO: fix - Icon size foreach object
         setIconSize(objects){
             const positions = Object.keys(objects).map(o => objects[o].position)
-            console.log(positions)
             const hasSamePosition = positions.some((element, index) => positions.indexOf(element) !== index);
             this.iconSize = hasSamePosition ? 25 : 55
         }
@@ -89,7 +91,7 @@ export default {
     width: 480px;
     border: 3px solid #555;
     flex-direction: column;
-    opacity: 0.9
+    opacity: 0.9;
 }
 
 .row {
@@ -103,6 +105,15 @@ export default {
     background-color: white;
 }
 
+.shadow {
+      
+      top: 405px; /* Ajuste a posição vertical da sombra conforme necessário */
+      left: 5px; /* Ajuste a posição horizontal da sombra conforme necessário */
+      width: 400px;
+      height: 5px; /* Ajuste a altura da sombra conforme necessário */
+      background-color: rgba(0, 0, 0, 0.3); /* Ajuste a cor e a opacidade da sombra conforme necessário */
+      transform: rotateX(90deg);
+    }
 
 .row:nth-child(odd) .cell:nth-child(even),
 .row:nth-child(even) .cell:nth-child(odd) {

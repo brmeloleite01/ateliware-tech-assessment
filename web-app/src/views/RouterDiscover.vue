@@ -25,7 +25,7 @@
               <v-row class="mt-4">
                 <v-autocomplete v-model="objects.drone.position" :items="tableMapPositions" label="Where is the drone?" v-intersect>
                   <template v-slot:prepend>
-                    <v-icon style="cursor: move" id="drone" :draggable="true" @dragstart="e => dragStart(e, 'drone')" :color="objects.drone.icon.color" :size="32">
+                    <v-icon class="draggable" id="drone" :draggable="true" @dragstart="e => dragStart(e, 'drone')" :color="objects.drone.icon.color" :size="32">
                       {{objects.drone.icon.name}}
                     </v-icon>
                   </template>
@@ -34,7 +34,7 @@
               <v-row>
                 <v-autocomplete v-model="objects.start.position" :items="tableMapPositions" label="Where will be the starting point?" v-intersect>
                   <template v-slot:prepend>
-                    <v-icon :color="objects.start.icon.color" :size="32" :draggable="true" @dragstart="e => dragStart(e, 'start')">
+                    <v-icon class="draggable" :color="objects.start.icon.color" :size="32" :draggable="true" @dragstart="e => dragStart(e, 'start')">
                       {{objects.start.icon.name}}
                     </v-icon>
                   </template>
@@ -43,7 +43,7 @@
               <v-row>
                 <v-autocomplete v-model="objects.end.position" :items="tableMapPositions" label="Where will be the ending point?" v-intersect>
                   <template v-slot:prepend>
-                    <v-icon :color="objects.end.icon.color" :size="32" :draggable="true" @dragstart="e => dragStart(e, 'end')">
+                    <v-icon class="draggable" :color="objects.end.icon.color" :size="32" :draggable="true" @dragstart="e => dragStart(e, 'end')">
                       {{objects.end.icon.name}}
                     </v-icon>
                   </template>
@@ -58,7 +58,7 @@
             </v-container>
           </v-window-item>
           <v-window-item value="last">
-
+            
           </v-window-item>
 
         </v-window>
@@ -108,7 +108,8 @@ export default {
         start: {position: undefined, icon: {color: 'blue', name: "mdi-record-circle-outline"} },
         end: {position: undefined, icon: {color: 'green', name: "mdi-send-circle-outline"}}
       },
-      route: ["A1", "B1"]
+      route: ["A1", "B1"],
+      
     }
   },
   mounted() {
@@ -121,7 +122,6 @@ export default {
     updateDropedObject({name, position}){
       this.objects[name].position = position
     }
-    
   }
 }
 
