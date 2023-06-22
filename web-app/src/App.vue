@@ -1,7 +1,6 @@
 <template>
-  <v-fade-transition mode="in" hide-on-leave="true">
     <router-view></router-view>
-  </v-fade-transition>
+ 
 </template>
 
 <script setup>
@@ -11,7 +10,7 @@
 <style>
 html,
 body {
-  background-color: #fafafa !important;
+  background-color: #ddd !important;
   overflow: hidden !important;
 }
 </style>

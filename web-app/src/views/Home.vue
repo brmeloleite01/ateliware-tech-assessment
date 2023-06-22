@@ -17,7 +17,7 @@
                 </div>
             </v-row>
             <v-row justify="center" class="mt-5">
-                <v-btn size="large" color="red-darken-4">
+                <v-btn size="large" color="red-darken-4" @click="goToRouteDiscover()">
                     <v-icon icon="mdi-routes-clock" class="mr-2"></v-icon> GET STARTED
                 </v-btn>
             </v-row>
@@ -26,12 +26,9 @@
 </template>
 <style scoped>
 .drone-animation {
-    width: 350px;
+    width: 450px;
 }
 
-.header-logo {
-    width: 200px;
-}
 </style>
 <script>
 import { Vue3Lottie } from 'vue3-lottie';
@@ -46,6 +43,11 @@ export default {
             DroneLogistics
         }
     },
+    methods: {
+        goToRouteDiscover(){
+            this.$router.push('/router-discover')
+        }
+    }
 
 }
 
