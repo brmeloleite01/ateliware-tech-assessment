@@ -13,6 +13,8 @@ import { createApp } from 'vue'
 // Plugins
 import { registerPlugins } from '@/plugins'
 
+import "animate.css"
+
 const app = createApp(App)
 
 registerPlugins(app)

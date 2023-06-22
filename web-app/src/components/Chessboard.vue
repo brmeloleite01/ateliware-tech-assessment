@@ -13,8 +13,10 @@
 
                     <div class="d-flex align-center justify-center">
 
-                        <div v-if="objects.drone.position === cell" class="draggable elevation-2 rounded-xl r bg-white"
-                            :draggable="true" @dragstart="e => dragStart(e, 'drone')">
+                        <div v-if="objects.drone.position === cell"
+                            class="draggable elevation-2 rounded-xl r bg-white animate__animated"
+                            :class="{ 'animate__flip': !routeAnimation }" :draggable="true"
+                            @dragstart="e => dragStart(e, 'drone')">
                             <v-avatar :size="28">
                                 <v-icon :icon="objects.drone.icon.name" :size="20"
                                     :color="objects.drone.icon.color"></v-icon>
@@ -22,19 +24,22 @@
                         </div>
 
 
-                        <div v-if="objects.start.position === cell" class="draggable elevation-2 rounded-xl bg-white"
-                            :draggable="true" @dragstart="e => dragStart(e, 'start')">
+                        <div v-if="objects.start.position === cell"
+                            class="draggable elevation-2 rounded-xl bg-white animate__animated"
+                            :class="{ 'animate__flip': !routeAnimation }" :draggable="true"
+                            @dragstart="e => dragStart(e, 'start')">
                             <v-avatar :size="28">
                                 <v-icon :icon="objects.start.icon.name" :size="20"
                                     :color="objects.start.icon.color"></v-icon>
                             </v-avatar>
 
-                            <v-icon icon="mdi-package" :size="15" color="amber"
-                                style="position:absolute; margin-top: -10px; margin-left: -5px"></v-icon>
+                            <v-icon icon="mdi-package" :size="15" color="amber" class="package-badge"></v-icon>
                         </div>
 
-                        <div v-if="objects.end.position === cell" class="draggable elevation-2 rounded-xl bg-white"
-                            :draggable="true" @dragstart="e => dragStart(e, 'end')">
+                        <div v-if="objects.end.position === cell"
+                            class="draggable elevation-2 rounded-xl bg-white animate__animated"
+                            :class="{ 'animate__flip': !routeAnimation }" :draggable="true"
+                            @dragstart="e => dragStart(e, 'end')">
 
                             <v-avatar :size="28">
                                 <v-icon :icon="objects.end.icon.name" :size="20" :color="objects.end.icon.color"></v-icon>
@@ -84,7 +89,8 @@ export default {
             droneIconSize: 20,
             startIconSize: 20,
             endIconSize: 20,
-            hideCellsID: true
+            hideCellsID: true,
+            routeAnimation: false
         }
     },
     mounted() {
@@ -107,16 +113,7 @@ export default {
         },
         dragStart(event, itemId) {
             event.dataTransfer.setData('text/plain', itemId);
-        },
-
-        // TO DO: fix - Icon size foreach object
-        setIconSize(objects) {
-            const positions = Object.keys(objects).map(o => objects[o].position)
-            const hasSamePosition = positions.some((element, index) => positions.indexOf(element) !== index);
-            this.iconSize = hasSamePosition ? 10 : 55
         }
-    },
-    watch: {
     }
 
 }
@@ -144,8 +141,8 @@ export default {
 }
 
 
-.draggable{
-  transition: all 0.5s ease;
+.draggable {
+    transition: all 0.5s ease;
 }
 
 .row:nth-child(odd) .cell:nth-child(even),
@@ -162,5 +159,12 @@ export default {
     justify-content: end;
     width: 100%;
     align-items: center;
+}
+
+.package-badge {
+    position: absolute !important;
+    margin-top: -10px;
+    margin-left: -10px;
+    border: 2px solid #fff
 }
 </style>
