@@ -19,7 +19,6 @@
                 </div>
             </div>
         </div>
-        <div class="shadow"></div>
     </div>
 </template>
 <script>

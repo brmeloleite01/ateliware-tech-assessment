@@ -14,6 +14,7 @@
           </v-tabs>
         </div>
 
+        {{ currentSearch }}
 
         <v-window v-model="tab">
 
@@ -51,19 +52,18 @@
               </v-row>
 
               <v-row justify="center" class="mt-5">
-                <v-btn color="red-darken-4">
+                <v-btn color="red-darken-4" @click="findFasterRoute()">
                   <v-icon icon="mdi-map-search-outline" class="mr-2"></v-icon> find fastest route
                 </v-btn>
               </v-row>
             </v-container>
           </v-window-item>
+          
           <v-window-item value="last">
-            
+            <LastSearches :key="lastSearchesKeyComponent"  class="pa-3"/>
           </v-window-item>
 
         </v-window>
-
-        
 
       </v-navigation-drawer>
       <v-main>
@@ -71,10 +71,6 @@
           
           <v-row justify="center" style="height: 100vh">
             <Chessboard @onDropObject="updateDropedObject"  :objects="objects" :IDs="tableMapPositions" v-if="tableMapPositions.length > 0" class="align-self-center"/>
-          </v-row>
-
-          <v-row>
-            
           </v-row>
 
         </v-container>
@@ -87,14 +83,17 @@
 
 <script>
 import { Vue3Lottie } from 'vue3-lottie';
-import TableMap from "../components/table.json"
-import Chessboard from '../components/Chessboard.vue';
+import TableMap from "@/components/table.json";
+import Chessboard from '@/components/Chessboard.vue';
+import LastSearches from '@/components/LastSearches.vue';
+import SearchService from "@/services/SearchService";
 
 export default {
   name: 'router-discover-page',
   components: {
     Vue3Lottie,
-    Chessboard
+    Chessboard,
+    LastSearches
 },
   data() {
     return {
@@ -109,7 +108,8 @@ export default {
         end: {position: undefined, icon: {color: 'green', name: "mdi-send-circle-outline"}}
       },
       route: ["A1", "B1"],
-      
+      lastSearchesKeyComponent: "",
+      search: {}
     }
   },
   mounted() {
@@ -121,7 +121,28 @@ export default {
     },
     updateDropedObject({name, position}){
       this.objects[name].position = position
-    }
+    },
+    renderLastSearchesComponent(){
+      this.lastSearchesKeyComponent = `last-search-key-${Math.random().toString()}`
+    },
+    async findFasterRoute(){
+      this.search = {
+        drone: this.objects.drone.position,
+        start: this.objects.start.position,
+        end: this.objects.end.position
+      }
+
+      //mocking result
+      this.search.result = {
+        path: ["A1", "A2", "A3"],
+        time: 3.5
+      }
+
+
+      await SearchService.save(this.search)
+      this.renderLastSearchesComponent()
+    },
+
   }
 }
 
