@@ -66,7 +66,7 @@
           </v-window-item>
 
           <v-window-item value="last">
-            <LastSearches :key="lastSearchesKeyComponent" class="pa-3" />
+            <LastSearches :key="lastSearchesKeyComponent" class="pa-3" @showOnMap="showOnMap" />
           </v-window-item>
 
         </v-window>
@@ -79,7 +79,7 @@
               <v-alert elevation="5" class="bg-white" icon="mdi-timer-marker-outline" title="Done!">
                 The drone will take {{ search.result?.time }} seconds to do the delivery.
                 <div class="d-flex justify-end mt-3">
-                  <v-btn variant="text" color="red-darken-4">
+                  <v-btn variant="text" color="red-darken-4" @click="showOnMap(search)">
                     <v-icon icon="mdi-map-marker-path"></v-icon> Show on map
                   </v-btn>
                 </div>
@@ -88,7 +88,7 @@
           </v-row>
 
           <v-row justify="center" :style="{ height: search.result ? '70vh' : '100vh' }">
-            <Chessboard @onDropObject="updateDropedObject" :path="search.result?.path" :objects="objects"
+            <Chessboard @onDropObject="updateDropedObject" :pathes="pathesToRender" :objects="objects"
               :IDs="tableMapPositions" :isSearching="searchInProgress" v-if="tableMapPositions.length > 0"
               class="align-self-center" />
           </v-row>
@@ -130,7 +130,8 @@ export default {
       lastSearchesKeyComponent: "",
       search: {},
       canSearch: false,
-      searchInProgress: false
+      searchInProgress: false,
+      pathesToRender: undefined
     }
   },
   mounted() {
@@ -148,6 +149,7 @@ export default {
     },
     async findFasterRoute() {
       this.searchInProgress = true
+      this.pathesToRender = undefined
       this.search = {
         drone: this.objects.drone.position,
         start: this.objects.start.position,
@@ -169,8 +171,9 @@ export default {
 
       }, 5000)
     },
-
-
+    showOnMap(search){
+      this.pathesToRender = search.result.path
+    }
   },
   watch: {
     objects: {

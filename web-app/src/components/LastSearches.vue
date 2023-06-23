@@ -38,7 +38,7 @@
                     </div>
                 </v-expansion-panel-title>
                 <v-expansion-panel-text>
-                    <v-btn block variant="text" prependIcon="mdi-map-marker-path" color="red-darken-4">Show on map</v-btn>
+                    <v-btn block variant="text" prependIcon="mdi-map-marker-path" color="red-darken-4" @click="e => emitShowOnMap(item)">Show on map</v-btn>
                 </v-expansion-panel-text>
             </v-expansion-panel>
         </v-expansion-panels>
@@ -63,6 +63,11 @@ export default {
     },
     mounted() {
         this.items = [...SearchService.items].reverse()
+    },
+    methods: {
+        emitShowOnMap(search) {
+            this.$emit('showOnMap', search)
+        }
     }
 }
 </script>

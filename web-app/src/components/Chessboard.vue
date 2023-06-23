@@ -5,22 +5,28 @@
         <div class="chessboard elevation-5">
             <div class="row" v-for="row, i in matrix" :key="`matrix-row-${i}`">
                 <div class="cell text-center justify-center"
-                    :class="{ 'path-highlight': path.length > 0 && path.indexOf(cell) > -1 }" v-for="cell in row" :id="cell"
+                    :class="{ 'path-highlight': animation.cells.indexOf(cell) > -1 }" v-for="cell in row" :id="cell"
                     @drop="e => drop(e, cell)" @dragover="allowDrop">
+
                     <small v-show="!hideCellsID"
-                        class="text-center align-self-top font-weight-black text-disabled position-absolute">{{ cell
-                        }}</small>
+                        class="text-center align-self-top font-weight-black text-disabled position-absolute">
+                        {{ cell }}
+                    </small>
 
                     <div class="d-flex align-center justify-center">
 
                         <div v-if="objects.drone.position === cell"
                             class="draggable elevation-2 rounded-xl r bg-white animate__animated"
-                            :class="{ 'animate__flip': !routeAnimation }" :draggable="true"
-                            @dragstart="e => dragStart(e, 'drone')">
+                            :class="{ 'animate__flip': !animation.show, 'animate__pulse': animation.show }"
+                            :draggable="true" @dragstart="e => dragStart(e, 'drone')">
+
                             <v-avatar :size="28">
                                 <v-icon :icon="objects.drone.icon.name" :size="20"
                                     :color="objects.drone.icon.color"></v-icon>
                             </v-avatar>
+                            <v-icon v-if="animation.objectWithPackage === 'drone'" icon="mdi-package" :size="15"
+                                color="amber" class="package-badge"></v-icon>
+
                         </div>
 
 
@@ -33,7 +39,8 @@
                                     :color="objects.start.icon.color"></v-icon>
                             </v-avatar>
 
-                            <v-icon icon="mdi-package" :size="15" color="amber" class="package-badge"></v-icon>
+                            <v-icon v-if="animation.objectWithPackage === 'start'" icon="mdi-package" :size="15"
+                                color="amber" class="package-badge"></v-icon>
                         </div>
 
                         <div v-if="objects.end.position === cell"
@@ -44,6 +51,9 @@
                             <v-avatar :size="28">
                                 <v-icon :icon="objects.end.icon.name" :size="20" :color="objects.end.icon.color"></v-icon>
                             </v-avatar>
+
+                            <v-icon v-if="animation.objectWithPackage === 'end'" icon="mdi-package" :size="15" color="amber"
+                                class="package-badge"></v-icon>
 
                         </div>
                     </div>
@@ -74,9 +84,9 @@ export default {
         objects: {
             type: Object
         },
-        path: {
-            type: Array,
-            default: []
+        pathes: {
+            type: Array[Array],
+            default: undefined
         },
         isSearching: {
             type: Boolean,
@@ -86,11 +96,12 @@ export default {
     data() {
         return {
             matrix: [],
-            droneIconSize: 20,
-            startIconSize: 20,
-            endIconSize: 20,
             hideCellsID: true,
-            routeAnimation: false
+            animation: {
+                show: false,
+                cells: [],
+                objectWithPackage: 'start' // drone, end 
+            }
         }
     },
     mounted() {
@@ -113,6 +124,38 @@ export default {
         },
         dragStart(event, itemId) {
             event.dataTransfer.setData('text/plain', itemId);
+        },
+        sleep(ms) {
+            return new Promise(resolve => setTimeout(resolve, ms))
+        },
+        async animateRoute(droneToStart, startToEnd) {
+            this.animation.show = true;
+            for (let cell of droneToStart) {
+                this.objects.drone.position = cell
+                this.animation.cells.push(cell)
+                await this.sleep(500)
+            }
+
+            this.animation.objectWithPackage = 'drone'
+
+            for (let cell of startToEnd) {
+                this.objects.drone.position = cell
+                this.animation.cells.push(cell)
+                await this.sleep(500)
+            }
+
+            this.animation.objectWithPackage = 'end'
+            this.animation.show = false
+        },
+
+    },
+    watch: {
+        pathes: {
+            deep: true,
+            handler(pathes) {
+                const [droneToStart, startToEnd] = pathes
+                this.animateRoute(droneToStart, startToEnd)
+            }
         }
     }
 
