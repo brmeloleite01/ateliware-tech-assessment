@@ -102,11 +102,3 @@ components:
               example: 3.4
               description: Seconds
       
-  requestBodies:
-    Search:
-      description: valid search object to storage 
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Search'
-      
