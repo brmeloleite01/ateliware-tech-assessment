@@ -22,7 +22,6 @@ paths:
       summary: Add a new search to database
       operationId: add
       requestBody:
-        description: Create a new pet in the store
         content:
           application/json:
             schema:
