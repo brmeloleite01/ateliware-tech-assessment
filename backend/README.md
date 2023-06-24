@@ -4,5 +4,5 @@
 
 ### Architecture Documentation
 
-![](./architecture-documentation.PNG)
+![](./backend-architecture-md-preview.PNG)
 
