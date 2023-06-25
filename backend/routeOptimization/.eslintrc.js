@@ -1,8 +1,8 @@
 module.exports = {
   root: true,
   env: {
-    es6: true,
-    node: true,
+    "es6": true,
+    "node": true,
   },
   extends: [
     "eslint:recommended",
@@ -11,6 +11,7 @@ module.exports = {
     "plugin:import/typescript",
     "google",
     "plugin:@typescript-eslint/recommended",
+    "plugin:jest/recommended",
   ],
   parser: "@typescript-eslint/parser",
   parserOptions: {
@@ -23,6 +24,7 @@ module.exports = {
   plugins: [
     "@typescript-eslint",
     "import",
+    "jest",
   ],
   rules: {
     "quotes": ["error", "double"],
