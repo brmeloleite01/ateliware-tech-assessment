@@ -41,8 +41,8 @@ service.get("", async (request: Request, response: Response) => {
 });
 
 
-service.get('/api-spec-json', (request: Request, response: Response) => {
-  response.status(200).json(openapiSpec)
+service.get("/api-spec-json", (request: Request, response: Response) => {
+  response.status(200).json(openapiSpec);
 });
 
 export const searches = functions
