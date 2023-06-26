@@ -19,15 +19,10 @@ describe("FastestStrategy", () => {
 
     it("should return the fastest path with time", async () => {
 
-        // const expectedPathTime: PathTime = {
-        //     path: ["A1", "A2", "A3"],
-        //     time: 10,
-        // };
+        const expectedPathTime: PathTime =  { path: [ 'A1', 'C1', 'D1' ], time: 9 };
 
         const result = await strategy.optimize(possiblePathes, from, to);
 
-        console.log(result);
-
-        // expect(result).toEqual(expectedPathTime);
+        expect(result).toEqual(expectedPathTime);
     });
 });
