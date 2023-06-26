@@ -9,8 +9,7 @@
     "start": "npm run shell",
     "deploy": "firebase deploy --only functions",
     "logs": "firebase functions:log",
-    "test": "jest",
-    "test:load": "artillery run __test__/load/artillery-config.yml"
+    "test": "jest"
   },
   "engines": {
     "node": "18"
