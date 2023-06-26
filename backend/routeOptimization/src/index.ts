@@ -1,6 +1,6 @@
 import * as functions from "firebase-functions";
 import express, {Request, Response} from "express";
-
+import cors from "cors";
 import {RouteOptimization} from "./service/RouteOptimization";
 import {ObjectsPosition} from "./types/ObjectsPosition";
 import {PossiblePathesAPI} from "./service/PossiblePathesAPI";
@@ -9,6 +9,7 @@ import {Route} from "./types/Route";
 import * as openapiSpec from "./route-optimization-specification.json";
 
 const service = express();
+service.use(cors());
 service.use(express.json());
 
 
