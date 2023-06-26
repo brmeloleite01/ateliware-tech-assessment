@@ -4,6 +4,7 @@ import express, {Request, Response} from "express";
 import {Search} from "./types/Search";
 import {SearchAdapter} from "./adapters/SearchAdapter";
 import {SearchDocument} from "./types/SearchDocument";
+import * as openapiSpec from "./search-api-specification.json";
 
 const service = express();
 service.use(express.json());
@@ -37,6 +38,11 @@ service.get("", async (request: Request, response: Response) => {
             .map((doc) => SearchAdapter.toSearch(doc.data() as SearchDocument));
 
   response.status(200).json(searches);
+});
+
+
+service.get('/api-spec-json', (request: Request, response: Response) => {
+  response.status(200).json(openapiSpec)
 });
 
 export const searches = functions
