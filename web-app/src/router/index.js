@@ -12,6 +12,12 @@ const routes = [
     name: 'router-discover',
     component: () => import(/* webpackChunkName: "routerDiscover" */ '@/views/RouterDiscover.vue'),
   },
+  {
+    path: '/developer-portal',
+    name: 'developer',
+    component: () => import(/* webpackChunkName: "developer" */ '@/views/Developer.vue'),
+
+  }
 ]
 
 const router = createRouter({

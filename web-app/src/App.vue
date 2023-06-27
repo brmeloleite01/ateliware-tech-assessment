@@ -11,6 +11,6 @@
 html,
 body {
   background-color: #ddd !important;
-  overflow: hidden !important;
+  overflow: auto;
 }
 </style>

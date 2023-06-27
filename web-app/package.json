@@ -6,7 +6,8 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "lint": "eslint . --fix --ignore-path .gitignore"
+    "lint": "eslint . --fix --ignore-path .gitignore",
+    "deploy": "vite build && firebase deploy --only hosting"
   },
   "dependencies": {
     "@mdi/font": "7.0.96",
@@ -14,6 +15,8 @@
     "axios": "^1.4.0",
     "core-js": "^3.29.0",
     "roboto-fontface": "*",
+    "swagger-ui": "^5.1.0",
+    "swagger-ui-dist": "^5.1.0",
     "vue": "^3.2.0",
     "vue-router": "^4.0.0",
     "vue3-lottie": "^2.7.1",

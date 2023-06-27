@@ -38,6 +38,7 @@
                     </div>
                 </v-expansion-panel-title>
                 <v-expansion-panel-text>
+                    <p>{{ new Date(item.date).toLocaleString('en') }}</p>
                     <v-btn block variant="text" prependIcon="mdi-map-marker-path" color="red-darken-4" @click="e => emitShowOnMap(item)">Show on map</v-btn>
                 </v-expansion-panel-text>
             </v-expansion-panel>
@@ -61,8 +62,8 @@ export default {
             EmptyListAnimation
         }
     },
-    mounted() {
-        this.items = [...SearchService.items].reverse()
+    async mounted() {
+        this.items = await SearchService.list()
     },
     methods: {
         emitShowOnMap(search) {

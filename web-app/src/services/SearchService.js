@@ -5,29 +5,28 @@ const searchesEndpoint = "https://southamerica-east1-ateliware-tech-assessment.c
 
 class SearchService {
 
-    
-
-    constructor(){
-        this.items = []
-    }
-
     /**
      * @param {{ drone: string, start: string, end: string, result: { path: Array, time: number}}} search 
      */
     async save(search) {
         if(!search) return;
 
-        if (this.items.length >= 10) {
-            this.items.shift();
-        }
-        this.items.push(search);
+        await axios.post(searchesEndpoint, {...search, date: new Date()});
+
     }
 
+    async list(){
+        const { data } = await axios.get(searchesEndpoint)
+
+        return data;
+    }
+
+
     async findFastestRoute(search){
-        const {data} = await axios.post(routeOptimizationEndpoint, search)
+        const {data} = await axios.post(routeOptimizationEndpoint, search);
 
         return data;
     }
 }
 
-export default new SearchService()
+export default new SearchService();

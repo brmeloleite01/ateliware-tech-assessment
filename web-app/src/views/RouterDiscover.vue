@@ -164,7 +164,10 @@ export default {
       this.search.result = result
       this.searchInProgress = false
 
-      SearchService.save(this.search).then(() => this.renderLastSearchesComponent())
+      
+      await SearchService.save(this.search)
+
+      this.renderLastSearchesComponent()
 
     },
     showOnMap(search){
