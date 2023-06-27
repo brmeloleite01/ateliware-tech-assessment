@@ -1,8 +1,8 @@
 {
   "openapi": "3.0.3",
   "info": {
-    "title": "Route Optimizer API",
-    "description": "API for route optimization.\nSome useful links:\n- [Repository](https://github.com/brmeloleite01/ateliware-tech-assessment)\n- [Web-App Consumer]()",
+    "title": "Route Optimization API",
+    "description": "API for route optimization.\nSome useful links:\n- [Repository](https://github.com/brmeloleite01/ateliware-tech-assessment)\n",
     "contact": {
       "email": "brmelo.leite@gmail.com"
     },
@@ -10,19 +10,19 @@
   },
   "servers": [
     {
-      "url": "not defined yet"
+      "url": "https://southamerica-east1-ateliware-tech-assessment.cloudfunctions.net"
     }
   ],
   "tags": [
     {
-      "name": "route-optimizer"
+      "name": "routeOptimization"
     }
   ],
   "paths": {
-    "/route-optimizer/fastest": {
+    "/routeOptimization/fastest": {
       "post": {
         "tags": [
-          "route-optimizer"
+          "routeOptimization"
         ],
         "summary": "it generates fastest path",
         "operationId": "generated",
