@@ -5,8 +5,11 @@ import {Search} from "./types/Search";
 import {SearchAdapter} from "./adapters/SearchAdapter";
 import {SearchDocument} from "./types/SearchDocument";
 import * as openapiSpec from "./search-api-specification.json";
+import cors from "cors";
 
 const service = express();
+
+service.use(cors());
 service.use(express.json());
 
 const collection = admin
