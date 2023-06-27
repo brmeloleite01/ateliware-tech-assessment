@@ -2,8 +2,8 @@
     <div>
 
         <v-progress-linear v-show="isSearching" indeterminate color="red-darken-4"></v-progress-linear>
-        <div class="chessboard elevation-5">
-            <div class="row" v-for="row, i in matrix" :key="`matrix-row-${i}`">
+        <div v-show="showBoard" class="chessboard elevation-5 animate__animated animate__pulse">
+            <div class="row" v-for="row, i in chessBoardMatrix"  :key="`matrix-row-${i}`">
                 <div class="cell text-center justify-center"
                     :class="{ 'path-highlight': animation.cells.indexOf(cell) > -1 }" v-for="cell in row" :id="cell"
                     @drop="e => drop(e, cell)" @dragover="allowDrop">
@@ -78,14 +78,11 @@
 export default {
     name: 'chessboard-map',
     props: {
-        IDs: {
-            type: Array,
-        },
         objects: {
             type: Object
         },
         pathes: {
-            type: Array[Array],
+            type: Array,
             default: undefined
         },
         isSearching: {
@@ -95,24 +92,42 @@ export default {
     },
     data() {
         return {
-            matrix: [],
+            chessBoardMatrix: [],
             hideCellsID: true,
             animation: {
                 show: false,
                 cells: [],
                 objectWithPackage: 'start' // drone, end 
-            }
+            },
+            showBoard: false,
+            
         }
     },
     mounted() {
-        this.matrixBuilder(this.IDs)
+        this.chessBoardBuilder()
+        this.showBoard = true
+        this.animationRestart()
     },
     methods: {
-        matrixBuilder(arr) {
-            for (let i = 0; i < arr.length; i += 8) {
-                const row = arr.slice(i, i + 8);
-                this.matrix.push(row)
+        chessBoardBuilder() {
+            const chessBoard = [];
+            const cellsIds = []
+
+            const letters = ['A', 'B', 'C', 'D', 'E', 'F', 'G', 'H'];
+            const numbers = ['1', '2', '3', '4', '5', '6', '7', '8'];
+
+            for (let i = 0; i < numbers.length; i++) {
+                const row = [];
+                for (let j = 0; j < letters.length; j++) {
+                    const position = letters[j] + numbers[i];
+                    row.push(position);
+                    cellsIds.push(position);
+                }
+                chessBoard.push(row);
             }
+
+            this.chessBoardMatrix = chessBoard;
+            this.$emit('cells', cellsIds);
         },
         allowDrop(event) {
             event.preventDefault();
@@ -120,7 +135,7 @@ export default {
         drop(event, cell) {
             event.preventDefault();
             const object = event.dataTransfer.getData('text/plain');
-            this.$emit('onDropObject', { name: object, position: cell })
+            this.$emit('onDropObject', { name: object, position: cell });
         },
         dragStart(event, itemId) {
             event.dataTransfer.setData('text/plain', itemId);
@@ -129,11 +144,11 @@ export default {
             return new Promise(resolve => setTimeout(resolve, ms))
         },
         async animateRoute(droneToStart, startToEnd) {
-            this.animation.show = true;
+            this.animationRestart();
             for (let cell of droneToStart) {
                 this.objects.drone.position = cell
                 this.animation.cells.push(cell)
-                await this.sleep(500)
+                await this.sleep(300)
             }
 
             this.animation.objectWithPackage = 'drone'
@@ -141,18 +156,30 @@ export default {
             for (let cell of startToEnd) {
                 this.objects.drone.position = cell
                 this.animation.cells.push(cell)
-                await this.sleep(500)
+                await this.sleep(300)
             }
 
             this.animation.objectWithPackage = 'end'
             this.animation.show = false
+
+            this.$emit('onAnimationFinish', true)
         },
+        animationRestart(){
+            this.animation.show = true;
+            this.animation.cells = []
+            this.animation.objectWithPackage = 'start';
+        }
 
     },
     watch: {
         pathes: {
             deep: true,
             handler(pathes) {
+                if(!pathes) {
+                    this.animationRestart()
+                    return;
+                };
+
                 const [droneToStart, startToEnd] = pathes
                 this.animateRoute(droneToStart, startToEnd)
             }
