@@ -26,7 +26,7 @@
 </template>
 <style scoped>
 .drone-animation {
-    width: 450px;
+    width: 300px;
 }
 
 </style>
