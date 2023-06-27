@@ -24,7 +24,7 @@
 
               <h6 class="text-right">Or complete the form manually. </h6>
               <v-row class="mt-4">
-                <v-autocomplete v-model="objects.drone.position" :items="tableMapPositions" label="Where is the drone?"
+                <v-autocomplete v-model="objects.drone.position" :items="cellsIds" label="Where is the drone?"
                   v-intersect>
                   <template v-slot:prepend>
                     <v-icon class="draggable elevation-2 rounded-xl bg-white pa-4" id="drone" :draggable="true"
@@ -35,7 +35,7 @@
                 </v-autocomplete>
               </v-row>
               <v-row>
-                <v-autocomplete v-model="objects.start.position" :items="tableMapPositions"
+                <v-autocomplete v-model="objects.start.position" :items="cellsIds"
                   label="Where will be the starting point?" v-intersect>
                   <template v-slot:prepend>
                     <v-icon class="draggable elevation-2 rounded-xl bg-white pa-4" :color="objects.start.icon.color"
@@ -46,7 +46,7 @@
                 </v-autocomplete>
               </v-row>
               <v-row>
-                <v-autocomplete v-model="objects.end.position" :items="tableMapPositions"
+                <v-autocomplete v-model="objects.end.position" :items="cellsIds"
                   label="Where will be the ending point?" v-intersect>
                   <template v-slot:prepend>
                     <v-icon class="draggable elevation-2 rounded-xl bg-white pa-4 border" :color="objects.end.icon.color"
@@ -73,13 +73,14 @@
 
       </v-navigation-drawer>
       <v-main>
+
         <v-container>
           <v-row justify="center" class="mb-0 mt-1" v-if="search.result">
             <v-col cols="5">
               <v-alert elevation="5" class="bg-white" icon="mdi-timer-marker-outline" title="Done!">
-                The drone will take {{ search.result?.time }} seconds to do the delivery.
+                The drone will take {{ search.result?.time.toFixed(2) }} seconds to do the delivery.
                 <div class="d-flex justify-end mt-3">
-                  <v-btn variant="text" color="red-darken-4" @click="showOnMap(search)">
+                  <v-btn variant="text" color="red-darken-4" v-if="search.showOnMap" @click="showOnMap(search)">
                     <v-icon icon="mdi-map-marker-path"></v-icon> Show on map
                   </v-btn>
                 </div>
@@ -88,9 +89,14 @@
           </v-row>
 
           <v-row justify="center" :style="{ height: search.result ? '70vh' : '100vh' }">
-            <Chessboard @onDropObject="updateDropedObject" :pathes="pathesToRender" :objects="objects"
-              :IDs="tableMapPositions" :isSearching="searchInProgress" v-if="tableMapPositions.length > 0"
-              class="align-self-center" />
+            <Chessboard 
+                @onDropObject="updateDropedObject" 
+                :pathes="pathesToRender" 
+                :objects="objects"
+                :isSearching="searchInProgress"
+                @cells="setCellIds"
+                @onAnimationFinish="setAnimationIsOver"
+              class="align-self-center " />
           </v-row>
 
         </v-container>
@@ -103,7 +109,6 @@
 
 <script>
 import { Vue3Lottie } from 'vue3-lottie';
-import TableMap from "@/components/table.json";
 import Chessboard from '@/components/Chessboard.vue';
 import LastSearches from '@/components/LastSearches.vue';
 import SearchService from "@/services/SearchService";
@@ -118,7 +123,6 @@ export default {
   data() {
     return {
       tab: 'searcher',
-      tableMapPositions: [],
       objects: {
         drone: {
           position: undefined,
@@ -131,12 +135,12 @@ export default {
       search: {},
       canSearch: false,
       searchInProgress: false,
-      pathesToRender: undefined
+      pathesToRender: undefined,
+      cellsIds: [],
+      animationIsOver: true
     }
   },
-  mounted() {
-    this.tableMapPositions = Object.keys(TableMap)
-  },
+ 
   methods: {
     dragStart(event, itemId) {
       event.dataTransfer.setData('text/plain', itemId);
@@ -149,36 +153,46 @@ export default {
     },
     async findFasterRoute() {
       this.searchInProgress = true
-      this.pathesToRender = undefined
       this.search = {
         drone: this.objects.drone.position,
         start: this.objects.start.position,
-        end: this.objects.end.position
+        end: this.objects.end.position,
+        showOnMap: true
       }
 
-      //mocking result
+      const result = await SearchService.findFastestRoute(this.search)
+      this.search.result = result
+      this.searchInProgress = false
 
-      setTimeout(() => {
-        this.search.result = {
-          path: [["A1", "A2", "A3", "A4", "A5"],["B6", "C7", "C6", "C5"]],
-          time: 3.5
-        }
+      SearchService.save(this.search).then(() => this.renderLastSearchesComponent())
 
-        this.searchInProgress = false
-
-        SearchService.save(this.search).then(() => this.renderLastSearchesComponent())
-
-
-      }, 5000)
     },
     showOnMap(search){
-      this.pathesToRender = search.result.path
+      this.animationIsOver = false
+      this.search = {...search, showOnMap: false}
+
+      // show on map can be trigged on last results
+      // they need set objects position
+      this.objects.drone.position = search.drone
+      this.objects.start.position = search.start
+      this.objects.end.position = search.end
+      this.pathesToRender = search.result.pathes
+    },
+    setCellIds(cells){
+      this.cellsIds = cells
+    },
+    setAnimationIsOver(finish){
+      this.animationIsOver = finish
     }
   },
   watch: {
     objects: {
       deep: true,
       handler() {
+        if(this.animationIsOver){
+          this.search = {};
+          this.pathesToRender = null;
+        }
         this.canSearch = (this.objects.drone?.position && this.objects.start?.position && this.objects.end?.position)
       }
     }

@@ -34,7 +34,7 @@
                 
                 <div style="position: absolute; right: 70px; top: 15px">
                         <v-icon icon="mdi-timer-marker-outline text-green"></v-icon>
-                        <h6 class="mt-2">{{ item.result.time }} s</h6>
+                        <h6 class="mt-2">{{ item.result.time.toFixed(2) }} s</h6>
                     </div>
                 </v-expansion-panel-title>
                 <v-expansion-panel-text>
