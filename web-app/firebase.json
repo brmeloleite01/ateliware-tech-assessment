@@ -1,0 +1,26 @@
+{
+  "hosting": {
+    "public": "dist",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "/api/routeOptimization/**",
+        "function": "routeOptimization",
+        "region": "southamerica-east1"
+      },
+      {
+        "source": "/api/searches",
+        "function": "searches",
+        "region": "southamerica-east1"
+      },
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}
