@@ -1,5 +1,11 @@
+import axios from 'axios'
+
+const routeOptimizationEndpoint = "https://southamerica-east1-ateliware-tech-assessment.cloudfunctions.net/routeOptimization/fastest"
+const searchesEndpoint = "https://southamerica-east1-ateliware-tech-assessment.cloudfunctions.net/searches"
 
 class SearchService {
+
+    
 
     constructor(){
         this.items = []
@@ -15,6 +21,12 @@ class SearchService {
             this.items.shift();
         }
         this.items.push(search);
+    }
+
+    async findFastestRoute(search){
+        const {data} = await axios.post(routeOptimizationEndpoint, search)
+
+        return data;
     }
 }
 
