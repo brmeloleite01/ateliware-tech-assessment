@@ -1,0 +1,111 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Route Optimization API",
+    "description": "API for route optimization.\nSome useful links:\n- [Repository](https://github.com/brmeloleite01/ateliware-tech-assessment)\n",
+    "contact": {
+      "email": "brmelo.leite@gmail.com"
+    },
+    "version": "1.0"
+  },
+  "servers": [
+    {
+      "url": "https://southamerica-east1-ateliware-tech-assessment.cloudfunctions.net"
+    }
+  ],
+  "tags": [
+    {
+      "name": "routeOptimization"
+    }
+  ],
+  "paths": {
+    "/routeOptimization/fastest": {
+      "post": {
+        "tags": [
+          "routeOptimization"
+        ],
+        "summary": "it generates fastest path",
+        "operationId": "generated",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ObjectsPosition"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "201": {
+            "description": "Successful operation",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Route"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid input"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "Route": {
+        "type": "object",
+        "properties": {
+          "pathes": {
+            "type": "array",
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "example": [
+              [
+                "A1",
+                "A2",
+                "A3",
+                "A4"
+              ],
+              [
+                "A5",
+                "A6",
+                "A7"
+              ]
+            ]
+          },
+          "time": {
+            "type": "number",
+            "format": "float",
+            "example": 3.4,
+            "description": "Seconds"
+          }
+        }
+      },
+      "ObjectsPosition": {
+        "type": "object",
+        "properties": {
+          "drone": {
+            "type": "string",
+            "example": "A1"
+          },
+          "start": {
+            "type": "string",
+            "example": "A4"
+          },
+          "end": {
+            "type": "string",
+            "example": "A6"
+          }
+        }
+      }
+    }
+  }
+}
