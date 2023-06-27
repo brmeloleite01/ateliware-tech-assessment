@@ -2,7 +2,8 @@
 
 > Monorepo for engineering tech assessment for Ateliware [See about challenge here.](https://communication-assets.gupy.io/production/companies/44084/emails/1687282449394/9ff97070-9cbd-11ed-b349-6b03aae20a37/engineering_tech_assessment_2023_en.pdf)
 
-# [Live Preview](https://ateliware-tech-assessment.web.app/)
+## [Live Preview - Playground](https://ateliware-tech-assessment.web.app/)
+## [Develop Portal - APIs documentation](https://ateliware-tech-assessment.web.app/developer-portal)
 
 ### Stack
 
@@ -34,6 +35,7 @@ On folder web-app, you'll find some instructions for execute it.
 
 - [ ] Fix rewriting hosting settings to redirect to API for Security improvements. (hide api domain)
 - [ ] Responsive Chessboard for mobile
+
 
 
 ### Insights
