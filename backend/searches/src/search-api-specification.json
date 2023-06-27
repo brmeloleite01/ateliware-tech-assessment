@@ -10,7 +10,7 @@
   },
   "servers": [
     {
-      "url": "not defined yet"
+      "url": "https://southamerica-east1-ateliware-tech-assessment.cloudfunctions.net"
     }
   ],
   "tags": [
